@@ -1,6 +1,8 @@
 (ns gh-file-reader.core-test
   (:use clojure.test
-        gh-file-reader.core))
+        gh-file-reader.core)
+  (:require [clojure.string :as str])
+  )
 
 (deftest normalize-path-test
   (are [x y] (= x (#'gh-file-reader.core/normalize-path y))
@@ -8,27 +10,42 @@
     "/foo.txt" "/foo.txt"))
 
 (deftest read-content-test
-  (let [c (read-content "liquidz" "misaki" "src/misaki/core.clj")]
-    (are [x y] (= x y)
-      false (nil? c)
-      true  (contains? c :type)
-      true  (contains? c :path)
-      true  (contains? c :sha)
-      true  (contains? c :size)
-      true  (contains? c :encoding)
-      true  (contains? c :content)
-      true  (contains? c :_links)
-      true  (contains? c :name))))
+  (testing "reading file"
+    (let [c (read-content "liquidz" "gh-file-reader" "test/test-files/foo")]
+      (are [x y] (= x y)
+        false (nil? c)
+        true  (contains? c :type)
+        true  (contains? c :path)
+        true  (contains? c :sha)
+        true  (contains? c :size)
+        true  (contains? c :encoding)
+        true  (contains? c :content)
+        true  (contains? c :_links)
+        true  (contains? c :name)
+        "foo" (str/trim (str-content c)))))
+
+  ;(testing "reading directory"
+  ;  )
+  )
 
 (deftest file?-test
-  (is (file? {:type "file"}))
-  (is (not (file? {:type "dir"}))))
+  (let [c (read-content "liquidz" "gh-file-reader" "test/test-files/foo")]
+    (is (file? c))
+    (is (not (dir? c)))))
 
 (deftest dir?-test
-  (is (not (dir? {:type "file"})))
-  (is (dir? {:type "dir"})))
+  (let [c (first (read-content "liquidz" "gh-file-reader" "test/test-files"))]
+    ;; c = baz
+    (is (not (file? c)))
+    (is (dir? c))))
 
 ;(deftest ls-test
-;  (ls "liquidz" "misaki" "/")
-;
-;  )
+;  (let [[a b c :as contents] (ls "liquidz" "gh-file-reader" "test/test-files")]
+;    (are [x y] (= x y)
+;      3 (count contents)
+;      "bar"   (:name a)
+;      "empty" (:name b)
+;      "foo"   (:name c)
+;      true    (dir? a)
+;      true    (dir? b)
+;      true    (file? c))))

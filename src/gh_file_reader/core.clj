@@ -1,5 +1,8 @@
 (ns gh-file-reader.core
-  (:use [clojure.data.json :only [read-json]])
+  (:require
+    [clojure.data.json :as json]
+    [clojure.data.codec.base64 :as base64]
+    )
   )
 
 (declare ^:dynamic *owner*)
@@ -18,12 +21,19 @@
    (-> (str "https://api.github.com/repos/"
             owner "/" repository "/contents" (normalize-path path))
      slurp
-     read-json)))
+     json/read-json)))
+
+;; GitHub Content Utility
 
 (defn file? [content]
   (= "file" (:type content)))
 (defn dir? [content]
   (= "dir" (:type content)))
+
+(defn str-content [content]
+  (-> (.getBytes (:content content))
+      base64/decode
+      String.))
 
 (defmacro with-repository [owner repository & body]
   `(binding [*owner* ~owner, *repository* ~repository] ~@body))
