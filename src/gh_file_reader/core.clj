@@ -41,7 +41,11 @@
 (defn -main
   "I don't do a whole lot."
   [& args]
-  (with-repository "liquidz" "misaki"
-    (println (read-content "src/misaki/core.clj"))
+  (with-repository "liquidz" "gh-file-reader"
+    ;(println (read-content "test/test-files"))
+    (doseq [x (read-content "test/test-files")]
+      (println x)
+      (println "")
+      )
     )
   )

@@ -24,9 +24,15 @@
         true  (contains? c :name)
         "foo" (str/trim (str-content c)))))
 
-  ;(testing "reading directory"
-  ;  )
-  )
+  (testing "reading directory"
+    (let [[a b :as contents]
+          (read-content "liquidz" "gh-file-reader" "test/test-files")]
+      (are [x y] (= x y)
+        2       (count contents)
+        "bar"   (:name a)
+        "foo"   (:name b)
+        true    (dir? a)
+        true    (file? b)))))
 
 (deftest file?-test
   (let [c (read-content "liquidz" "gh-file-reader" "test/test-files/foo")]
@@ -39,13 +45,3 @@
     (is (not (file? c)))
     (is (dir? c))))
 
-;(deftest ls-test
-;  (let [[a b c :as contents] (ls "liquidz" "gh-file-reader" "test/test-files")]
-;    (are [x y] (= x y)
-;      3 (count contents)
-;      "bar"   (:name a)
-;      "empty" (:name b)
-;      "foo"   (:name c)
-;      true    (dir? a)
-;      true    (dir? b)
-;      true    (file? c))))
