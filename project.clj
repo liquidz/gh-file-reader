@@ -5,6 +5,5 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [org.clojure/data.json "0.1.3"]
-                 [org.clojure/data.codec "0.1.0"]]
-  :main gh-file-reader.core)
+                 [org.clojure/data.codec "0.1.0"]])
 
