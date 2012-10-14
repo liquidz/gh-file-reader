@@ -73,10 +73,17 @@
     (is (not (file? c)))
     (is (dir? c))))
 
+;;; not-found?
+(deftest not-found?-test
+  (let [existing-file     (read-content "liquidz" "gh-file-reader" "test")
+        not-existing-file (read-content "liquidz" "gh-file-reader" "notexisting")]
+    (is (not (:not-found? existing-file)))
+    (is (:not-found? not-existing-file))))
+
 (deftest download-test
   (testing "download file"
-    (download (read-content "liquidz" "gh-file-reader" "test/test-files/foo")
-              ".")
+    (is (download (read-content "liquidz" "gh-file-reader" "test/test-files/foo")
+                  "."))
     (let [file (io/file "foo")]
       (are [x y] (= x y)
         true  (.exists file)
@@ -84,8 +91,8 @@
       (.delete file)))
 
   (testing "download directory"
-    (download (read-content "liquidz" "gh-file-reader" "test/test-files/bar")
-              "./bar")
+    (is (download (read-content "liquidz" "gh-file-reader" "test/test-files/bar")
+                  "./bar"))
     (let [bar-dir  (io/file "bar")
           baz-file (io/file "bar/baz")
           bin-dir  (io/file "bar/bin")
@@ -101,4 +108,8 @@
 
       ; delete files
       (doseq [f [baz-file ico-file bin-dir bar-dir]]
-        (.delete f)))))
+        (.delete f))))
+
+  (testing "download not-existing file"
+    (is (not (download (read-content "liquidz" "gh-file-reader" "notexisting")
+                       "./bar")))))
