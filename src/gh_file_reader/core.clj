@@ -23,10 +23,10 @@
    (read-content *owner* repository path))
   ([owner repository path]
    (try
-     (let [data (->> (normalize-path path)
-                  (str "https://api.github.com/repos/" owner "/" repository "/contents")
-                  slurp
-                  json/read-json)]
+     (let [raw-data (->> (normalize-path path)
+                          (str "https://api.github.com/repos/" owner "/" repository "/contents")
+                          slurp)
+           data (json/read-str raw-data :key-fn keyword)]
        (if (sequential? data)
          (map #(assoc % :owner owner :repository repository) data)
          (assoc data    :owner owner :repository repository)))
