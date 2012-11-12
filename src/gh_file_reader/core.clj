@@ -26,7 +26,7 @@
      (let [data (->> (normalize-path path)
                   (str "https://api.github.com/repos/" owner "/" repository "/contents")
                   slurp
-                  json/read-json)]
+                  json/read-str)]
        (if (sequential? data)
          (map #(assoc % :owner owner :repository repository) data)
          (assoc data    :owner owner :repository repository)))
